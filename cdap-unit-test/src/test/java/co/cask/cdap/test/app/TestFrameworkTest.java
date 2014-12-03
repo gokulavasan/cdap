@@ -326,11 +326,11 @@ public class TestFrameworkTest extends TestBase {
       serviceManager.setRunnableInstances(runnableName, 2);
       runnableInstancesCheck(serviceManager, runnableName, 2, retries);
 
-      // Test that the worker starts with 5 instances
+      // Test that the worker starts with 3 instances
       DataSetManager<KeyValueTable> datasetManager = applicationManager
                                                       .getDataSet(AppUsingGetServiceURL.WORKER_INSTANCES_DATASET);
       KeyValueTable instancesTable = datasetManager.get();
-      CloseableIterator<KeyValue<byte[], byte[]>> instancesIterator = instancesTable.scan(null, null);
+      CloseableIterator<KeyValue<byte[], byte[]>> instancesIterator = instancesTable.scan(Bytes.toBytes("init"), null);
       List<KeyValue<byte[], byte[]>> workerInstances = Lists.newArrayList(instancesIterator);
       instancesIterator.close();
 

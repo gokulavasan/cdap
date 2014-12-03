@@ -147,7 +147,7 @@ public class ServiceProgramRunner implements ProgramRunner {
       ProgramOptions componentOptions = createComponentOptions(name, instanceId, instances, runId, userArguments);
       ProgramController controller = programRunnerFactory.create(ProgramRunnerFactory.Type.SERVICE_COMPONENT)
         .run(program, componentOptions);
-      components.put(program.getName(), instanceId, controller);
+      components.put(name, instanceId, controller);
     }
   }
 
@@ -215,9 +215,11 @@ public class ServiceProgramRunner implements ProgramRunner {
         return;
       }
       Map<String, String> command = (Map<String, String>) value;
+      String runnableName = command.get("runnable");
+      int newCount = Integer.valueOf(command.get("newInstances"));
       lock.lock();
       try {
-        changeInstances(command.get("runnable"), Integer.valueOf(command.get("newInstances")));
+        changeInstances(runnableName, newCount);
       } catch (Throwable t) {
         LOG.error(String.format("Fail to change instances: %s", command), t);
       } finally {
@@ -232,7 +234,7 @@ public class ServiceProgramRunner implements ProgramRunner {
      * @throws java.util.concurrent.ExecutionException
      * @throws InterruptedException
      */
-    private void changeInstances(String runnableName, final int newCount) throws Exception {
+    private void changeInstances(String runnableName, int newCount) throws Exception {
       Map<Integer, ProgramController> liveRunnables = components.row(runnableName);
       int liveCount = liveRunnables.size();
       if (liveCount == newCount) {
@@ -254,6 +256,12 @@ public class ServiceProgramRunner implements ProgramRunner {
         ProgramController controller = programRunnerFactory.create(ProgramRunnerFactory.Type.SERVICE_COMPONENT)
                                                            .run(program, options);
         components.put(runnableName, instanceId, controller);
+      }
+
+      liveRunnables = components.row(runnableName);
+      // Update total instance count for all running runnables
+      for (Map.Entry<Integer, ProgramController> entry : liveRunnables.entrySet()) {
+        entry.getValue().command(runnableName, newCount);
       }
     }
   }

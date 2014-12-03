@@ -115,4 +115,8 @@ public class ServiceWorkerDriver extends AbstractExecutionThreadService {
       ClassLoaders.setContextClassLoader(classLoader);
     }
   }
+
+  public void setInstanceCount(int instanceCount) {
+    context.setInstanceCount(instanceCount);
+  }
 }
