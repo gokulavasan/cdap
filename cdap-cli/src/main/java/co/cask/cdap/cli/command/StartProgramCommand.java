@@ -53,14 +53,16 @@ public class StartProgramCommand implements Command {
       // run with stored runtime args
       programClient.start(appId, elementType.getProgramType(), programId);
       runtimeArgsString = GSON.toJson(programClient.getRuntimeArgs(appId, elementType.getProgramType(), programId));
+      output.printf("Successfully started %s '%s' of application '%s' with stored runtime arguments '%s'\n",
+                    elementType.getPrettyName(), programId, appId, runtimeArgsString);
     } else {
       // run with user-provided runtime args
       Map<String, String> runtimeArgs = Splitter.on(" ").withKeyValueSeparator("=").split(runtimeArgsString);
       programClient.start(appId, elementType.getProgramType(), programId, runtimeArgs);
+      output.printf("Successfully started %s '%s' of application '%s' with provided runtime arguments '%s'\n",
+                    elementType.getPrettyName(), programId, appId, runtimeArgsString);
     }
 
-    output.printf("Successfully started %s '%s' of application '%s' with runtime arguments '%s'\n",
-                  elementType.getPrettyName(), programId, appId, runtimeArgsString);
   }
 
   @Override
