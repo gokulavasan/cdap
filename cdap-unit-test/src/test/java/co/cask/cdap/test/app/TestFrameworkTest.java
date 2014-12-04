@@ -334,10 +334,10 @@ public class TestFrameworkTest extends TestBase {
       List<KeyValue<byte[], byte[]>> workerInstances = Lists.newArrayList(instancesIterator);
       instancesIterator.close();
 
-      Assert.assertEquals(5, workerInstances.size());
+      Assert.assertEquals(3, workerInstances.size());
       // Assert that each instance of the worker knows the total number of instances
       for (KeyValue<byte[], byte[]> keyValue : workerInstances) {
-        Assert.assertEquals(5, Bytes.toInt(keyValue.getValue()));
+        Assert.assertEquals(3, Bytes.toInt(keyValue.getValue()));
       }
 
       serviceManager.stop();
